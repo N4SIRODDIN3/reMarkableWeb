@@ -13,12 +13,20 @@ export default async (
   try {
     if (req.method === "POST") {
       const code = req.body.code;
+      // Note: API expects Content-Type: text/plain and raw JSON string!
+      const payload = JSON.stringify({
+        code,
+        deviceDesc: "browser-chrome",
+        deviceID: v4(),
+      });
+
       const result = await axios.post<string>(
-        "https://webapp-production-dot-remarkable-production.appspot.com/token/json/2/device/new",
+        "https://webapp.cloud.remarkable.com/token/json/2/device/new",
+        payload,
         {
-          code,
-          deviceDesc: "desktop-windows",
-          deviceID: v4(),
+          headers: {
+            "Content-Type": "text/plain;charset=UTF-8",
+          },
         }
       );
       res.status(200).json({ deviceToken: result.data });
